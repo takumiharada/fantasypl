@@ -6,7 +6,9 @@ class Command(BaseCommand):
 	
 	
 	def handle(self, *args, **options):
-		
+			
+			Player.objects.all().delete()
+
 			allplayers = json.load(open("players.current.json"))
 			
 			mostminutes = ""
@@ -24,13 +26,17 @@ class Command(BaseCommand):
 				
 				
 				totalscorelast10 = 0
+				totalminuteslast10 = 0
+
 				while nummatches < 38 and count > 0:
 					if player["fixture_history"]["all"][count][3] > 0:
 						totalscorelast10 = totalscorelast10 + player["fixture_history"]["all"][count][19]
+						totalminuteslast10 = totalminuteslast10 + player["fixture_history"]["all"][count][3]
 						nummatches = nummatches + 1
-						
+							
 					count = count - 1
 					
 				if(player["minutes"] > 0):
-					p = Player(player_id = player["id"], team_id = player["team"], last_name = player["second_name"], first_name = player["first_name"], cost = player["now_cost"], team_name = player["team_name"], last10avg = totalscorelast10, type_name = player["type_name"])
+					p = Player(player_id = player["id"], team_id = player["team"], last_name = player["second_name"], first_name = player["first_name"], cost = player["now_cost"], team_name = player["team_name"], totalpoints = player["total_points"], last10total = totalscorelast10, last10minutes = totalminuteslast10, type_name = player["type_name"], totalminutes = player["minutes"])
 					p.save()
+
